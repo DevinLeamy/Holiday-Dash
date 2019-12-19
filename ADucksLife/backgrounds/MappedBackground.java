@@ -115,7 +115,6 @@ public class MappedBackground extends Background{
 			{0, 0, 1, 3, 4, 4, 1, 0, 0},
 			{0, 0, 1, 4, 4, 4, 1, 0, 0},
 			{0, 0, 1, 4, 4, 4, 1, 0, 0},
-			
 	};
 	
 	public MappedBackground() {
