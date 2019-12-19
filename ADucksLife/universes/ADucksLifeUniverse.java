@@ -3,7 +3,6 @@ import java.util.ArrayList;
 public class ADucksLifeUniverse extends Universe{
 	public ADucksLifeUniverse() {
 		super();
-		
 		background = new MappedBackground();
 		ArrayList<StaticSprite> barriers =  ((MappedBackground)background).getBarriers();
 		ArrayList<EnemieSprite> enemies = ((MappedBackground)background).getEnemies();
@@ -22,7 +21,6 @@ public class ADucksLifeUniverse extends Universe{
 		if (keyboard.keyDownOnce(27)) {
 			complete = true;
 		}
-		
 		updateSprites(keyboard, actual_delta_time);
 		disposeSprites();
 	}
