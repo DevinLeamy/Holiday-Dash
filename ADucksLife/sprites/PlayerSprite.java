@@ -48,7 +48,7 @@ public class PlayerSprite extends ActiveSprite{
 	@Override
 	public void update(Universe universe, KeyboardInput keyboard, long actual_delta_time) {
 
-		double velocityX = 0;
+ 		double velocityX = 0;
 		double velocityY = 0;
 		
 		if (keyboard.keyDownOnce(37)) {
@@ -70,7 +70,8 @@ public class PlayerSprite extends ActiveSprite{
 			this.addCenterX(deltaX);
 		}
 		
-		double deltaY = actual_delta_time * 0.001 * -125;
+		double deltaY = -1;
+		System.out.println(deltaY);
 		if (checkCollisionWithBarrier(universe, 0, deltaY) == false) {
 			this.addCenterY(deltaY);
 		}
@@ -108,16 +109,6 @@ public class PlayerSprite extends ActiveSprite{
 			} 
 		}
 		
-//		for (int i = 1; i < universe.getActiveSprites().size(); i++) {
-//			ActiveSprite activeSprite = universe.getActiveSprites().get(i);
-//			if (CollisionDetection.overlaps(this.getMinX() + deltaX, this.getMinY() + deltaY, 
-//					this.getMaxX()  + deltaX, this.getMaxY() + deltaY, 
-//					activeSprite.getMinX(),activeSprite.getMinY(), 
-//					activeSprite.getMaxX(), activeSprite.getMaxY())) {					
-//					colliding = true;
-//					break;				
-//			}
-//		}
 		if (!changeColor && changeColorEventually) {
 			isGreen = !isGreen;
 			changeColorEventually = false;
@@ -126,6 +117,7 @@ public class PlayerSprite extends ActiveSprite{
 		} else {
 			changeColorEventually = false;
 		}
+		System.out.println("IS COLLIDING = " + colliding);
 		return colliding;		
 	}
 
