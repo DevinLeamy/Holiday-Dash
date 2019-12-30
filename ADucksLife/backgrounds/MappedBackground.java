@@ -2,120 +2,23 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Random;
 
 import javax.imageio.ImageIO;
 
 public class MappedBackground extends Background{
-	protected static int TILE_WIDTH = 100;
-	protected static int TILE_HEIGHT = 100;
+	protected static int TILE_WIDTH = 75;
+	protected static int TILE_HEIGHT = 75;
 	
 	private Image wall; //1
 	private Image greenBarrier; //2
 	private Image redBlock; //3
 	private Image grass; //4
 	private Image epicScene; //0
-	private int maxCols = 0;
-	private int maxRows = 0;
+	private int maxCols = 9;
+	private int maxRows = 40000;
 	
-	private int[][] map = {
-			{0, 0, 1, 1, 1, 1, 1, 0, 0},
-			{0, 0, 1, 4, 4, 4, 1, 0, 0},
-			{0, 0, 1, 4, 4, 4, 1, 0, 0},
-			{0, 0, 1, 4, 3, 4, 1, 0, 0},
-			{0, 0, 1, 4, 4, 4, 1, 0, 0},
-			{0, 0, 1, 3, 4, 4, 1, 0, 0},
-			{0, 0, 1, 4, 4, 4, 1, 0, 0},
-			{0, 0, 1, 4, 3, 4, 1, 0, 0},
-			{0, 0, 1, 4, 4, 4, 1, 0, 0},
-			{0, 0, 1, 4, 4, 3, 1, 0, 0},
-			{0, 0, 1, 4, 4, 4, 1, 0, 0},
-			{0, 0, 1, 4, 3, 4, 1, 0, 0},
-			{0, 0, 1, 4, 4, 4, 1, 0, 0},
-			{0, 0, 1, 4, 4, 4, 1, 0, 0},
-			{0, 0, 1, 4, 2, 4, 1, 0, 0},
-			{0, 0, 1, 4, 3, 4, 1, 0, 0},
-			{0, 0, 1, 4, 4, 4, 1, 0, 0},
-			{0, 0, 1, 4, 2, 4, 1, 0, 0},
-			{0, 0, 1, 3, 4, 4, 1, 0, 0},
-			{0, 0, 1, 4, 4, 3, 1, 0, 0},
-			{0, 0, 1, 4, 4, 4, 1, 0, 0},
-			{0, 0, 1, 4, 4, 4, 1, 0, 0},
-			{0, 0, 1, 3, 4, 4, 1, 0, 0},
-			{0, 0, 1, 4, 4, 4, 1, 0, 0},
-			{0, 0, 1, 4, 4, 4, 1, 0, 0},
-			{0, 0, 1, 4, 4, 4, 1, 0, 0},
-			{0, 0, 1, 4, 4, 4, 1, 0, 0},
-			{0, 0, 1, 4, 3, 4, 1, 0, 0},
-			{0, 0, 1, 4, 4, 4, 1, 0, 0},
-			{0, 0, 1, 3, 4, 4, 1, 0, 0},
-			{0, 0, 1, 4, 4, 4, 1, 0, 0},
-			{0, 0, 1, 4, 3, 4, 1, 0, 0},
-			{0, 0, 1, 4, 4, 4, 1, 0, 0},
-			{0, 0, 1, 4, 4, 3, 1, 0, 0},
-			{0, 0, 1, 4, 4, 4, 1, 0, 0},
-			{0, 0, 1, 2, 3, 4, 1, 0, 0},
-			{0, 0, 1, 4, 4, 4, 1, 0, 0},
-			{0, 0, 1, 4, 4, 4, 1, 0, 0},
-			{0, 0, 1, 4, 4, 2, 1, 0, 0},
-			{0, 0, 1, 4, 3, 4, 1, 0, 0},
-			{0, 0, 1, 4, 4, 4, 1, 0, 0},
-			{0, 0, 1, 4, 4, 4, 1, 0, 0},
-			{0, 0, 1, 3, 4, 4, 1, 0, 0},
-			{0, 0, 1, 4, 4, 3, 1, 0, 0},
-			{0, 0, 1, 4, 4, 4, 1, 0, 0},
-			{0, 0, 1, 4, 4, 4, 1, 0, 0},
-			{0, 0, 1, 3, 4, 4, 1, 0, 0},
-			{0, 0, 1, 4, 4, 4, 1, 0, 0},
-			{0, 0, 1, 4, 4, 4, 1, 0, 0},
-			{0, 0, 1, 4, 4, 4, 1, 0, 0},
-			{0, 0, 1, 4, 4, 4, 1, 0, 0},
-			{0, 0, 1, 4, 3, 4, 1, 0, 0},
-			{0, 0, 1, 4, 4, 4, 1, 0, 0},
-			{0, 0, 1, 3, 4, 4, 1, 0, 0},
-			{0, 0, 1, 4, 4, 4, 1, 0, 0},
-			{0, 0, 1, 4, 3, 4, 1, 0, 0},
-			{0, 0, 1, 4, 4, 4, 1, 0, 0},
-			{0, 0, 1, 4, 4, 3, 1, 0, 0},
-			{0, 0, 1, 4, 4, 4, 1, 0, 0},
-			{0, 0, 1, 4, 3, 4, 1, 0, 0},
-			{0, 0, 1, 4, 4, 4, 1, 0, 0},
-			{0, 0, 1, 4, 4, 4, 1, 0, 0},
-			{0, 0, 1, 4, 4, 4, 1, 0, 0},
-			{0, 0, 1, 4, 3, 4, 1, 0, 0},
-			{0, 0, 1, 4, 4, 4, 1, 0, 0},
-			{0, 0, 1, 4, 4, 4, 1, 0, 0},
-			{0, 0, 1, 3, 4, 4, 1, 0, 0},
-			{0, 0, 1, 4, 4, 3, 1, 0, 0},
-			{0, 0, 1, 4, 4, 4, 1, 0, 0},
-			{0, 0, 1, 4, 4, 4, 1, 0, 0},
-			{0, 0, 1, 3, 4, 4, 1, 0, 0},
-			{0, 0, 1, 4, 4, 4, 1, 0, 0},
-			{0, 0, 1, 4, 4, 4, 1, 0, 0},
-			{0, 0, 1, 4, 4, 4, 1, 0, 0},
-			{0, 0, 1, 4, 4, 4, 1, 0, 0},
-			{0, 0, 1, 4, 3, 4, 1, 0, 0},
-			{0, 0, 1, 4, 4, 2, 1, 0, 0},
-			{0, 0, 1, 3, 4, 4, 1, 0, 0},
-			{0, 0, 1, 4, 4, 4, 1, 0, 0},
-			{0, 0, 1, 4, 3, 4, 1, 0, 0},
-			{0, 0, 1, 4, 4, 4, 1, 0, 0},
-			{0, 0, 1, 4, 4, 3, 1, 0, 0},
-			{0, 0, 1, 4, 4, 4, 1, 0, 0},
-			{0, 0, 1, 4, 3, 4, 1, 0, 0},
-			{0, 0, 1, 4, 4, 4, 1, 0, 0},
-			{0, 0, 1, 4, 4, 4, 1, 0, 0},
-			{0, 0, 1, 4, 4, 4, 1, 0, 0},
-			{0, 0, 1, 4, 3, 4, 1, 0, 0},
-			{0, 0, 1, 4, 4, 4, 1, 0, 0},
-			{0, 0, 1, 4, 4, 4, 1, 0, 0},
-			{0, 0, 1, 3, 4, 4, 1, 0, 0},
-			{0, 0, 1, 4, 4, 3, 1, 0, 0},
-			{0, 0, 1, 4, 4, 4, 1, 0, 0},
-			{0, 0, 1, 4, 4, 4, 1, 0, 0},
-			{0, 0, 1, 3, 4, 4, 1, 0, 0},
-			{0, 0, 1, 4, 4, 4, 1, 0, 0},
-			{0, 0, 1, 4, 4, 4, 1, 0, 0},
-	};
+	private int[][] map;
 	
 	public MappedBackground() {
 		try {
@@ -127,8 +30,7 @@ public class MappedBackground extends Background{
 		} catch (IOException e) {
 			System.err.println(e.toString());
 		}
-		maxRows = map.length;
-		maxCols = map[0].length;
+		map = generateMap(maxRows, maxCols);
 	}
 	public Tile getTile(int col, int row) {
 		Image image = null;
@@ -159,8 +61,47 @@ public class MappedBackground extends Background{
 		int y = (row * TILE_HEIGHT);
 		Tile newTile = new Tile(image, x, y, TILE_WIDTH, TILE_HEIGHT, false);
 		return newTile;
+		
 	}
-	
+	private int[][] generateMap(int rows, int cols) {
+		int[][] newMap = new int[rows][cols];
+		for (int i = 0; i < rows; i++) {
+			for (int j = 1; j < cols-2; j++) {
+				if (j == 1 || j == cols-3) {
+					newMap[i][j] = 1;
+				} else if (i % 4 == 0) {
+					newMap[i][j] = getRandomInteger(1, 4);
+				} else {
+					newMap[i][j] = 4;
+				}
+			}
+		}
+		for (int i = 0; i < rows; i += 4) {
+			boolean[] valid = {false, false, false}; //Has path, has red, has green
+			for (int j = 2; j < cols-2; j++) {
+				if (newMap[i][j] == 2) {valid[2] = true;}
+				else if (newMap[i][j] == 3) {valid[1] = true;}
+				else if (newMap[i][j] == 4) {valid[0] = true;}
+			}
+			if (valid[0] || (valid[1] && valid[2])) {continue;}
+			else {
+				int numOne = getRandomInteger(2, maxCols-4);
+				newMap[i][numOne] = 3;
+				int numTwo;
+				while (true) {
+					numTwo = getRandomInteger(2, maxCols-4);
+					if (numTwo != numOne) {break;}
+				}
+				newMap[i][numTwo] = 2;
+			}
+		}
+		
+		return newMap;
+	}
+	private int getRandomInteger(int bottomBound, int topBound) {
+		Random random = new Random();
+		return random.nextInt((topBound - bottomBound) + 1) + bottomBound;
+	}
 	public int getRow(int y) {
 		int row = 0;
 		if (TILE_HEIGHT != 0) {
