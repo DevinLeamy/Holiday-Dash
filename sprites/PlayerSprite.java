@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 import javax.swing.JLabel;
@@ -12,24 +13,28 @@ public class PlayerSprite extends ActiveSprite{
 	private final double VELOCITY_SHIFT = 75;
 	private final double VELOCITY_UP = 300;
 	public double VELOCITY_FORWARD = 3.5;
-	private boolean isGreen = true;
+	public boolean isGreen = false;
 	private boolean changeColorEventually = false;
+	private ArrayList<int[]> snowCovered = new ArrayList<>();
 
-	public Image imageA;
-	public Image imageB;
+	private Image greenSleigh;
+	private Image redSleigh;
+	private Image originalSleigh;
+	
 
 	public PlayerSprite(double centerX, double centerY, boolean isGreen) {
 		super();
-		this.isGreen = true;
+		this.isGreen = false;
 		this.setCenterX(centerX);
 		this.setCenterY(centerY);
 
-		if (imageA == null) {
+		if (greenSleigh == null) {
 			try {
-				imageA = ImageIO.read(new File("res/Images/greenBlock.png"));
-				imageB = ImageIO.read(new File("res/Images/enemie.png"));
-				this.setHeight(this.imageA.getHeight(null) / 2);
-				this.setWidth(this.imageA.getWidth(null) / 2);
+				greenSleigh = ImageIO.read(new File("res/Images/greenSleigh.png"));
+				redSleigh = ImageIO.read(new File("res/Images/redSleigh.png"));
+				originalSleigh = ImageIO.read(new File("res/Images/GenericSleigh.png"));
+				this.setHeight(this.greenSleigh.getHeight(null) / 2);
+				this.setWidth(this.greenSleigh.getWidth(null) / 2);
 			}
 			catch (IOException e) {
 				System.out.println(e.toString());
@@ -40,13 +45,12 @@ public class PlayerSprite extends ActiveSprite{
 	public Image getImage() {
 //		System.out.println(String.format("PlayerSprite: isGreen=%b", isGreen));
 		if (isGreen) {
-			return imageA;
+			return greenSleigh;
 		}
 		else {
-			return imageB;			
+			return redSleigh;			
 		}
 	}
-
 	@Override
 	public void update(Universe universe, KeyboardInput keyboard, long actual_delta_time) {
 		if (universe.isPaused) {
@@ -91,7 +95,7 @@ public class PlayerSprite extends ActiveSprite{
 	private boolean checkCollisionWithBarrier(Universe universe, double deltaX, double deltaY) {
 		boolean colliding = false;
 		boolean changeColor = false;
-		
+		ArrayList<int[]> newSnowCovered = new ArrayList<>();
 		for (StaticSprite staticSprite : universe.getStaticSprites()) {
 			if (staticSprite instanceof BarrierSprite) {
 				if (CollisionDetection.overlaps(this.getMinX() + deltaX, this.getMinY() + deltaY, 
@@ -102,7 +106,15 @@ public class PlayerSprite extends ActiveSprite{
 					colliding = true;
 					break;					
 				}
-			} 
+			}  else if (staticSprite instanceof PathSprite) {
+				if (CollisionDetection.overlaps(this.getMinX() + deltaX, this.getMinY() + deltaY, 
+						this.getMaxX()  + deltaX, this.getMaxY() + deltaY, 
+						staticSprite.getMinX(),staticSprite.getMinY(), 
+						staticSprite.getMaxX(), staticSprite.getMaxY())) {
+//					universe.background.changeTile(staticSprite.row, staticSprite.col, 7);				
+					newSnowCovered.add(new int[] {staticSprite.row, staticSprite.col, 7});
+				}
+			}
 		}	
 		for (EnemieSprite enemieSprite : universe.getEnemieSprites()) {
 			if (CollisionDetection.overlaps(this.getMinX() + deltaX, this.getMinY() + deltaY, 
@@ -115,10 +127,26 @@ public class PlayerSprite extends ActiveSprite{
 					universe.setComplete(true);
 					break;					
 				} else {
+//					universe.background.changeTile(enemieSprite.row,  enemieSprite.col, (enemieSprite.isGreen)? 5 : 6);
+					newSnowCovered.add(new int[] {enemieSprite.row, enemieSprite.col, (enemieSprite.isGreen)? 5 : 6});
 					changeColor = true;
 				}
 			} 
 		}
+		if (snowCovered.size() != 0) {
+			for (int[] coords : snowCovered) {
+				boolean found = false;
+				for (int[] otherCoords : newSnowCovered) {
+					if (coords[0] == otherCoords[0] && coords[1] == otherCoords[1]) {
+						found = true;
+					}
+				}
+				if (!found) {
+					universe.background.changeTile(coords[0], coords[1], coords[2]);
+				}
+			}
+		}
+		snowCovered = newSnowCovered;
 		
 		if (!changeColor && changeColorEventually && !colliding) {
 			isGreen = !isGreen;

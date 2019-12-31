@@ -16,8 +16,8 @@ public class HolidayDashUniverse extends Universe{
 		int tileSize = background.getTileSize();
 		int trackLength = tileSize * background.getRowsAndCols()[0];
 		player = new PlayerSprite(338, trackLength - 350, true);
-		player.setHeight(MappedBackground.TILE_HEIGHT * 0.8);
-		player.setWidth(MappedBackground.TILE_WIDTH * 0.8);
+		player.setHeight(MappedBackground.TILE_HEIGHT);
+		player.setWidth(MappedBackground.TILE_WIDTH*0.8);
 		activeSprites.add(player);
 		staticSprites.addAll(barriers);
 		enemieSprites.addAll(enemies);

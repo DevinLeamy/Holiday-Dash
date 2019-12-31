@@ -1,6 +1,5 @@
 import javax.swing.*;
 
-import org.w3c.dom.css.RGBColor;
 
 import java.awt.*;
 import java.awt.Dialog.ModalityType;
@@ -82,7 +81,7 @@ public class AnimationFrame extends JFrame {
 		});
 
 		Container cp = getContentPane();
-		cp.setBackground(Color.BLACK);
+		cp.setBackground(Color.WHITE);
 		cp.setLayout(null);
 
 		panel = new DrawPanel();
@@ -98,8 +97,8 @@ public class AnimationFrame extends JFrame {
 			}
 		});
 
-		btnPauseRun.setFont(new Font("Tahoma", Font.BOLD, 12));
-		btnPauseRun.setBounds(20, 20, 48, 32);
+		btnPauseRun.setFont(new Font("Dialog", Font.PLAIN, 30));
+		btnPauseRun.setBounds(20, 20, 75, 75);
 		btnPauseRun.setFocusable(false);
 		getContentPane().add(btnPauseRun);
 		getContentPane().setComponentZOrder(btnPauseRun, 0);
@@ -107,20 +106,20 @@ public class AnimationFrame extends JFrame {
 		lblHighScore = new JLabel("High Score ");
 		lblHighScore.setForeground(Color.BLACK);
 		lblHighScore.setFont(new Font("Dialog", Font.PLAIN, 30));
-		lblHighScore.setBounds(80, 22, 200, 40);
+		lblHighScore.setBounds(120, 22, 240, 40);
 		getContentPane().add(lblHighScore);
 		getContentPane().setComponentZOrder(lblHighScore, 0);
 
 		lblHighScoreValue = new JLabel("0");
 		lblHighScoreValue.setForeground(Color.BLACK);
-		lblHighScoreValue.setFont(new Font("Tahoma", Font.BOLD, 30));
-		lblHighScoreValue.setBounds(260, 22, 108, 40);
+		lblHighScoreValue.setFont(new Font("Dialog", Font.PLAIN, 30));
+		lblHighScoreValue.setBounds(300, 22, 148, 40);
 		getContentPane().add(lblHighScoreValue);
 		getContentPane().setComponentZOrder(lblHighScoreValue, 0);
 
 		lblScore = new JLabel("Score: ");
 		lblScore.setForeground(Color.BLACK);
-		lblScore.setFont(new Font("Tahoma", Font.BOLD, 30));
+		lblScore.setFont(new Font("Dailog", Font.PLAIN, 30));
 		lblScore.setBounds(528, 22, 128, 40);
 		getContentPane().add(lblScore);
 		getContentPane().setComponentZOrder(lblScore, 0);
@@ -199,7 +198,7 @@ public class AnimationFrame extends JFrame {
 			}
 			GameOverPage gameOverPage;
 			try {
-				gameOverPage = new GameOverPage();
+				gameOverPage = new GameOverPage(universe.player.isGreen);
 				gameOverPage.setModalityType(ModalityType.APPLICATION_MODAL);
 				gameOverPage.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 				gameOverPage.setVisible(true);
@@ -272,7 +271,7 @@ public class AnimationFrame extends JFrame {
 	private void updatePlayerVelocity() {
 		MappedBackground newMappedBackground = new MappedBackground();
 		int totalTrackLength = MappedBackground.TILE_HEIGHT * newMappedBackground.getRowsAndCols()[0];
-		player1.setSpeed(4 + ((totalTrackLength - player1.getCenterY()) / 6000)); 
+		player1.setSpeed(3.5 + ((totalTrackLength - player1.getCenterY()) / 6000)); 
 	}
 	private void handleKeyboardInput() {
 		if (keyboard.keyDown(80) && ! universe.isPaused) {

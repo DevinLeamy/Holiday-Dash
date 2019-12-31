@@ -16,17 +16,23 @@ public class MappedBackground extends Background{
 	private Image path; //4
 	private Image snowflake; //0
 	private int maxCols = 10;
-	private int maxRows = 300;
+	private int maxRows = 3000;
+	private Image greenBarrierAfter;
+	private Image redBarrierAfter;
+	private Image pathAfter;
 	
 	private int[][] map;
 	
 	public MappedBackground() {
 		try {
-			this.treeWall = ImageIO.read(new File("res/Images/treeImage.jpg"));
+			this.treeWall = ImageIO.read(new File("res/Images/topViewTree.png"));
 			this.greenBarrier = ImageIO.read(new File("res/Images/greenBlock.png"));
 			this.path = ImageIO.read(new File("res/Images/path.png"));
 			this.redBarrier = ImageIO.read(new File("res/Images/enemie.png"));
 			this.snowflake = ImageIO.read(new File("res/Images/snowflake.jpg"));
+			this.greenBarrierAfter = ImageIO.read(new File("res/Images/greenBarrierAfter.png"));
+			this.redBarrierAfter = ImageIO.read(new File("res/Images/redBarrierAfter.png"));
+			this.pathAfter = ImageIO.read(new File("res/Images/pathAfter.png"));
 		} catch (IOException e) {
 			System.err.println(e.toString());
 		}
@@ -52,6 +58,15 @@ public class MappedBackground extends Background{
 					break;
 				case 4:
 					image = path;
+					break;
+				case 5:
+					image = greenBarrierAfter;
+					break;
+				case 6:
+					image = redBarrierAfter;
+					break;
+				case 7:
+					image = pathAfter;
 					break;
 				default:
 					image = null;
@@ -138,8 +153,10 @@ public class MappedBackground extends Background{
 			for (int col = 0; col < maxCols; col++) {
 				if (map[row][col] == 1) {
 //					System.out.println("ADDED WALL");
-					barriers.add(new BarrierSprite(col * TILE_WIDTH, row * TILE_HEIGHT, (col + 1) * TILE_WIDTH, (row + 1) * TILE_HEIGHT, false, map[row][col]));
-				} 
+					barriers.add(new BarrierSprite(col * TILE_WIDTH, row * TILE_HEIGHT, (col + 1) * TILE_WIDTH, (row + 1) * TILE_HEIGHT, false, map[row][col], row, col));
+				} else if (map[row][col] == 4) {
+					barriers.add(new PathSprite(col * TILE_WIDTH, row * TILE_HEIGHT, (col + 1) * TILE_WIDTH, (row + 1) * TILE_HEIGHT, false, map[row][col], row, col));
+				}
 			}
 		}
 		return barriers;
@@ -153,14 +170,17 @@ public class MappedBackground extends Background{
 			for (int j = 0; j < maxCols; j++) {
 				if (map[i][j] == 3) {
 //					System.out.println("ADDED redBlock");
-					enemies.add(new EnemieSprite(j * TILE_WIDTH, i * TILE_HEIGHT, (j + 1) * TILE_WIDTH, (i + 1) * TILE_HEIGHT, false, map[i][j], false));
+					enemies.add(new EnemieSprite(j * TILE_WIDTH, i * TILE_HEIGHT, (j + 1) * TILE_WIDTH, (i + 1) * TILE_HEIGHT, false, map[i][j], false, i, j));
 				} else if (map[i][j] == 2) {
 //					System.out.println("ADDED WATER");
-					enemies.add(new EnemieSprite(j * TILE_WIDTH, i * TILE_HEIGHT, (j + 1) * TILE_WIDTH, (i + 1) * TILE_HEIGHT, false, map[i][j], true));
+					enemies.add(new EnemieSprite(j * TILE_WIDTH, i * TILE_HEIGHT, (j + 1) * TILE_WIDTH, (i + 1) * TILE_HEIGHT, false, map[i][j], true, i, j));
 				}
 			}
 		}
 		return enemies;
+	}
+	public void changeTile(int row, int col, int newValue) {
+		map[row][col] = newValue;
 	}
 	
 }

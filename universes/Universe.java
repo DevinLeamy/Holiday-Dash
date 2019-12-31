@@ -17,7 +17,7 @@ public abstract class Universe {
 
 	protected MappedBackground background = null;    
 	
-	protected ActiveSprite player = null;
+	protected PlayerSprite player = null;
 	protected ArrayList<ActiveSprite> activeSprites = new ArrayList<ActiveSprite>();
 	protected ArrayList<StaticSprite> staticSprites = new ArrayList<>();
 	protected ArrayList<EnemieSprite> enemieSprites = new ArrayList<>();
@@ -122,5 +122,5 @@ public abstract class Universe {
 
 	protected abstract boolean hasGameStarted();
 
-	protected abstract void setStarted(boolean b);	
+	protected abstract void setStarted(boolean b);
 }

@@ -9,8 +9,10 @@ public class BarrierSprite extends StaticSprite {
 
 	private static Image image = null;
 	public static int id;
+	public int row;
+	public int col;
 	
-	public BarrierSprite(double minX, double minY, double maxX, double maxY, boolean showImage, int id) {
+	public BarrierSprite(double minX, double minY, double maxX, double maxY, boolean showImage, int id, int row, int col) {
 		
 		if (image == null && showImage) {
 			try {
@@ -20,23 +22,18 @@ public class BarrierSprite extends StaticSprite {
 				e.printStackTrace();
 			}		
 		}
-		
+		this.row = row;
+		this.col = col;
 		this.minX = minX;
 		this.minY = minY;
 		this.maxX = maxX;
 		this.maxY = maxY;
 		this.showImage = showImage;
 		this.id = id;
-		handleCollision(id);
 	}
 	
 	@Override
 	public Image getImage() {
 		return image;
-	}
-	public static void handleCollision(int id) {
-		if (id == 3) {
-			//Trigger game over and restart menu
-		} 
 	}
 }

@@ -1,3 +1,4 @@
+import java.awt.Frame;
 import java.awt.Image;
 import java.awt.Rectangle;
 import java.io.File;

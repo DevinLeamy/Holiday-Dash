@@ -10,8 +10,9 @@ public class EnemieSprite extends StaticSprite {
 	private static Image image = null;
 	public boolean isGreen;
 	public static int id;
-	
-	public EnemieSprite(double minX, double minY, double maxX, double maxY, boolean showImage, int id, boolean isGreen) {
+	public int row;
+	public int col;
+	public EnemieSprite(double minX, double minY, double maxX, double maxY, boolean showImage, int id, boolean isGreen, int row, int col) {
 		this.isGreen = isGreen;
 		if (image == null && showImage) {
 			try {
@@ -28,17 +29,12 @@ public class EnemieSprite extends StaticSprite {
 		this.maxY = maxY;
 		this.showImage = showImage;
 		this.id = id;
-		handleCollision(id);
+		this.row = row;
+		this.col = col;
 	}
 	
 	@Override
 	public Image getImage() {
 		return image;
-	}
-	public static void handleCollision(int id) {
-		//I want this to be triggered when the duckSprite comes in contact with the wolf sprite
-		if (id == 3) {
-			//Trigger game over and restart menu
-		} 
 	}
 }

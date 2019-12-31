@@ -14,6 +14,8 @@ public abstract class StaticSprite extends Sprite {
 	protected double minY = 0;
 	protected double maxX = 0;
 	protected double maxY = 0;
+	public int col;
+	public int row;
 
 	public abstract Image getImage();
 	
