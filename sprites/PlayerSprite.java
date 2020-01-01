@@ -7,6 +7,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
+import javax.sound.sampled.AudioSystem;
 import javax.swing.JLabel;
 
 public class PlayerSprite extends ActiveSprite{
@@ -16,6 +17,7 @@ public class PlayerSprite extends ActiveSprite{
 	public boolean isGreen = false;
 	private boolean changeColorEventually = false;
 	private ArrayList<int[]> snowCovered = new ArrayList<>();
+	private boolean collidedWithBlock = false;
 
 	private Image greenSleigh;
 	private Image redSleigh;
@@ -67,7 +69,16 @@ public class PlayerSprite extends ActiveSprite{
 		if (keyboard.keyDownOnce(32)) {
 			if (!universe.hasGameStarted()) {
 				universe.setStarted(true);
-				
+				try {
+					File clipFile = new File("res/Sound/gamePlayingSound.wav");
+					AnimationFrame.gamePlayingInputStream =  
+			                AudioSystem.getAudioInputStream(clipFile.getAbsoluteFile()); 
+					AnimationFrame.gamePlayingClip = AudioSystem.getClip();
+					AnimationFrame.gamePlayingClip.open(AnimationFrame.gamePlayingInputStream);
+					AnimationFrame.gamePlayingClip.loop(AnimationFrame.gamePlayingClip.LOOP_CONTINUOUSLY);
+					AnimationFrame.gamePlayingClip.start();
+					AnimationFrame.gameSoundIsPlaying = true;
+				} catch(Exception e) {e.printStackTrace();}
 			}
 			velocityY += -VELOCITY_UP;
 			double deltaY = 0.15 * velocityY;
@@ -81,7 +92,6 @@ public class PlayerSprite extends ActiveSprite{
 		}
 		
 		double deltaY = (universe.hasGameStarted())? -VELOCITY_FORWARD: 0;
-//		System.out.println(deltaY);
 		if (checkCollisionWithBarrier(universe, 0, deltaY) == false) {
 			this.addCenterY(deltaY);
 		}
@@ -91,6 +101,9 @@ public class PlayerSprite extends ActiveSprite{
 	}
 	public void setSpeed(double newSpeed) {
 		VELOCITY_FORWARD = newSpeed;
+	}
+	public boolean collidedWithBlock() {
+		return collidedWithBlock;
 	}
 	private boolean checkCollisionWithBarrier(Universe universe, double deltaX, double deltaY) {
 		boolean colliding = false;
@@ -104,6 +117,7 @@ public class PlayerSprite extends ActiveSprite{
 						staticSprite.getMaxX(), staticSprite.getMaxY())) {
 //					System.out.println("COLLIDING WITH WALL");
 					colliding = true;
+					universe.setComplete(true);
 					break;					
 				}
 			}  else if (staticSprite instanceof PathSprite) {
@@ -125,6 +139,7 @@ public class PlayerSprite extends ActiveSprite{
 				if (enemieSprite.isGreen == isGreen) {
 					colliding = true;
 					universe.setComplete(true);
+					collidedWithBlock = true;
 					break;					
 				} else {
 //					universe.background.changeTile(enemieSprite.row,  enemieSprite.col, (enemieSprite.isGreen)? 5 : 6);

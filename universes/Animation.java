@@ -11,10 +11,7 @@ public class Animation {
 		Animation.universeCount = count;
 	}
 
-	public static Universe getNextUniverse() {
-//		if (universeCount == 0) {
-//			return new MenuUniverse();
-//		}
+	public static HolidayDashUniverse getNextUniverse() {
 		universeCount++;
 		return new HolidayDashUniverse();
 

@@ -8,6 +8,7 @@ public class HolidayDashUniverse extends Universe{
 	private static int highScore = 0;
 	private static int score = 0;
 	private boolean gameStarted = false;
+	private boolean newHighScore = false;
 	public HolidayDashUniverse() {
 		super();
 		background = new MappedBackground();
@@ -51,6 +52,12 @@ public class HolidayDashUniverse extends Universe{
 		}
 		updateSprites(keyboard, actual_delta_time);
 		disposeSprites();
+	}
+	public void gotNewHighScore() {
+		newHighScore = true;
+	}
+	public boolean getNewHighScore() {
+		return newHighScore;
 	}
 	private void initHighScore() {
 		try {

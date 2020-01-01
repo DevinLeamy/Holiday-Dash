@@ -2,6 +2,9 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 
 import javax.imageio.ImageIO;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -28,6 +31,8 @@ public class MenuDialog extends JDialog {
 	private JLabel lblRedBlock;
 	private JLabel lblGreenBlock;
 	private JLabel lblSideViewTree;
+	private AudioInputStream introMusicInputStream;
+	private Clip introMusicClip;
 	public static void main(String[] args) {
 		MenuDialog dialog = new MenuDialog();
 		dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
@@ -36,6 +41,7 @@ public class MenuDialog extends JDialog {
 			public void keyPressed(KeyEvent evt) {
 				char character = evt.getKeyChar();
 		        if (character == ' ') {
+		        	dialog.introMusicClip.stop();
 		        	//Start the game
 		        	System.out.println("SPACE BAR WAS PRESSED");
 		        	AnimationFrame animationFrame = new AnimationFrame();
@@ -57,6 +63,7 @@ public class MenuDialog extends JDialog {
 				char character = evt.getKeyChar();
 		        if (character == ' ') {
 		        	System.out.println("SPACE BAR WAS PRESSED");
+		        	dialog.introMusicClip.stop();
 		        	AnimationFrame animationFrame = new AnimationFrame();
 		        	animationFrame.setVisible(true);
 		        	dialog.setVisible(false);
@@ -148,9 +155,18 @@ public class MenuDialog extends JDialog {
 		lblSideViewTree.setIcon(treeSideViewIcon);
 		lblGreenBlock.setIcon(greenBlockIcon);
 		lblRedBlock.setIcon(redBlockIcon);
-		
-	
 		initHighScore();
+		try {
+			File clipFile = new File("res/Sound/introSoundTrack.wav");
+			introMusicInputStream =  
+	                AudioSystem.getAudioInputStream(clipFile.getAbsoluteFile()); 
+			introMusicClip = AudioSystem.getClip();
+			introMusicClip.open(introMusicInputStream);
+			introMusicClip.loop(introMusicClip.LOOP_CONTINUOUSLY);
+			introMusicClip.start();
+		} catch (Exception e) {
+		}
+		
 	}
 	private void initHighScore() {
 		try {

@@ -1,6 +1,11 @@
+import javax.print.attribute.standard.Media;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
 import javax.swing.*;
 
-
+import java.applet.Applet;
+import java.applet.AudioClip;
 import java.awt.*;
 import java.awt.Dialog.ModalityType;
 import java.util.ArrayList;
@@ -10,7 +15,9 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 //Press Space to Dash *Blinking*
 public class AnimationFrame extends JFrame {
 
@@ -33,6 +40,9 @@ public class AnimationFrame extends JFrame {
 	private JLabel lblScore;
 	private JLabel lblScoreValue;
 	public JLabel lblBegin;
+	public static Clip gamePlayingClip;
+	public static AudioInputStream gamePlayingInputStream;
+	public static boolean gameSoundIsPlaying = false;
 
 	private static Thread game;
 	private static boolean stop = false;
@@ -45,7 +55,7 @@ public class AnimationFrame extends JFrame {
 	private long elapsed_time = 0;
 
 	private KeyboardInput keyboard = new KeyboardInput();
-	private Universe universe = null;
+	private HolidayDashUniverse universe = null;
 
 	//local (and direct references to various objects in universe ... should reduce lag by avoiding dynamic lookup
 	private ActiveSprite player1 = null;
@@ -137,6 +147,14 @@ public class AnimationFrame extends JFrame {
 		lblBegin.setBounds(0, 500, 900, 550);
 		getContentPane().add(lblBegin);
 		getContentPane().setComponentZOrder(lblBegin, 0);
+
+		try {
+			File clipFile = new File("res/Sound/gamePlayingSound.wav");
+			gamePlayingInputStream =  
+	                AudioSystem.getAudioInputStream(clipFile.getAbsoluteFile()); 
+			gamePlayingClip = AudioSystem.getClip();
+		} catch (Exception e) {
+		}
 		
 	}
 
@@ -195,15 +213,32 @@ public class AnimationFrame extends JFrame {
 
 				//REFRESH
 				this.repaint();   
+				System.out.println("------------------------------------------");
+				System.out.println("Universe Complete: " + universe.isComplete());
+				System.out.println("Universe Paused: " + universe.isPaused);
+				System.out.println("Music Playing: " + gameSoundIsPlaying);
 			}
 			GameOverPage gameOverPage;
 			try {
-				gameOverPage = new GameOverPage(universe.player.isGreen);
+				gamePlayingClip.stop();
+				gameSoundIsPlaying = false;
+				File clipFile = new File("res/Sound/crashSound.wav");
+				AudioInputStream crashInputStream =  
+		                AudioSystem.getAudioInputStream(clipFile.getAbsoluteFile()); 
+				Clip crashClip = AudioSystem.getClip();
+				crashClip.open(crashInputStream);
+				crashClip.start();
+				try {
+					Thread.sleep(1500);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				crashClip.stop();
+				gameOverPage = new GameOverPage(universe.player.isGreen, universe.player.collidedWithBlock(), universe.getNewHighScore());
 				gameOverPage.setModalityType(ModalityType.APPLICATION_MODAL);
 				gameOverPage.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 				gameOverPage.setVisible(true);
 				if (gameOverPage.isOk()) {
-//					System.out.println("run again");
 					universe = Animation.getNextUniverse();
 					HolidayDashUniverse.setScore(-HolidayDashUniverse.getScore());
 				} else {
@@ -224,6 +259,7 @@ public class AnimationFrame extends JFrame {
 		if (score > highScore) {
 			HolidayDashUniverse.setHighScore(score);
 			lblHighScoreValue.setText(String.valueOf(score));
+			universe.gotNewHighScore();
 		}
 	}
 	private void updateTime() {
@@ -257,17 +293,21 @@ public class AnimationFrame extends JFrame {
 		}
 	}
 	protected void btnPauseRun_mouseClicked(MouseEvent arg0) {
+		if (!universe.hasGameStarted()) {return;}
 		if (universe.isPaused) {
 			this.btnPauseRun.setText("||");
+			universe.isPaused = false;
+	        gamePlayingClip.start(); 
+	        gameSoundIsPlaying = true;
 		}
 		else {
 			this.btnPauseRun.setText(">");
+			universe.isPaused = true;
+			gamePlayingClip.stop();
+			gameSoundIsPlaying = false;
+			
 		}
-		universe.isPaused = !universe.isPaused;
 	}
-//	public boolean gameIsPaused() {
-//		return univisPaused;
-//	}
 	private void updatePlayerVelocity() {
 		MappedBackground newMappedBackground = new MappedBackground();
 		int totalTrackLength = MappedBackground.TILE_HEIGHT * newMappedBackground.getRowsAndCols()[0];

@@ -4,6 +4,10 @@ import java.awt.Font;
 import java.awt.Image;
 
 import javax.imageio.ImageIO;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.FloatControl;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -36,11 +40,13 @@ public class GameOverPage extends JDialog{
 	private ImageIcon enemieIcon;
 	private ImageIcon sleighIcon;
 	private ImageIcon explosionIcon;
+	private JLabel lblNewHighScoreText;
+	private JLabel lblHighScore;
 	public boolean isOk() {
 		return ok;
 	}
 
-	public GameOverPage(boolean isGreen) {
+	public GameOverPage(boolean isGreen, boolean collidedWithBlock, boolean gotNewHighScore) {
 		setBackground(Color.WHITE);
 		setBounds(0, 0, 920, 920);
 		getContentPane().setLayout(new BorderLayout());
@@ -57,7 +63,7 @@ public class GameOverPage extends JDialog{
 		lblGameOver.setForeground(Color.RED);
 		lblGameOver.setBackground(Color.RED);
 		lblGameOver.setFont(new Font("Dialog", Font.PLAIN, 70));
-		lblGameOver.setBounds(6, 146, 914, 83);
+		lblGameOver.setBounds(0, 171, 920, 83);
 		contentPanel.add(lblGameOver);
 		JButton okButton = new JButton("Try Again");
 		okButton.addActionListener(new ActionListener() {
@@ -81,7 +87,7 @@ public class GameOverPage extends JDialog{
 		getRootPane().setDefaultButton(okButton);
 		contentPanel.add(okButton);
 		
-		JLabel lblHighScore = new JLabel("High Score: ");
+		lblHighScore = new JLabel("High Score: ");
 		lblHighScore.setForeground(Color.GREEN);
 		lblHighScore.setFont(new Font("Dialog", Font.PLAIN, 35));
 		lblHighScore.setBounds(18, 809, 230, 61);
@@ -117,12 +123,24 @@ public class GameOverPage extends JDialog{
 		lblEnemieBlock.setBounds(520, 455, 113, 113);
 		
 		try {
-			if (isGreen) {
-				enemieIcon = new ImageIcon(ImageIO.read(new File("res/Images/greenBlock.png")));
-				sleighIcon = new ImageIcon(ImageIO.read(new File("res/Images/sleighOneGreen.png")));
+			if (collidedWithBlock) {
+				if (isGreen) {
+					enemieIcon = new ImageIcon(ImageIO.read(new File("res/Images/greenBlock.png")));
+					sleighIcon = new ImageIcon(ImageIO.read(new File("res/Images/sleighOneGreen.png")));
+				} else {
+					enemieIcon = new ImageIcon(ImageIO.read(new File("res/Images/enemie.png")));
+					sleighIcon = new ImageIcon(ImageIO.read(new File("res/Images/sleighOne.png")));
+				}
 			} else {
-				enemieIcon = new ImageIcon(ImageIO.read(new File("res/Images/enemie.png")));
-				sleighIcon = new ImageIcon(ImageIO.read(new File("res/Images/sleighOne.png")));
+				if (isGreen) {
+					sleighIcon = new ImageIcon(ImageIO.read(new File("res/Images/sleighOneGreen.png")));
+				} else {
+					sleighIcon = new ImageIcon(ImageIO.read(new File("res/Images/sleighOne.png")));
+				}
+				Image treeSideView = ImageIO.read(new File("res/Images/treeSideViewTwo.png"));
+				lblEnemieBlock.setBounds(480, 375, 200, 200);
+				Image treeSideViewResized = treeSideView.getScaledInstance(lblEnemieBlock.getWidth(), lblEnemieBlock.getHeight(), Image.SCALE_SMOOTH);
+				enemieIcon = new ImageIcon(treeSideViewResized);
 			}
 			Image explosion = ImageIO.read(new File("res/Images/explosion.png"));
 			Image explosionScaled = explosion.getScaledInstance(lblExplosion.getWidth(), lblExplosion.getHeight(), Image.SCALE_SMOOTH);
@@ -140,6 +158,12 @@ public class GameOverPage extends JDialog{
 		contentPanel.add(lblSleigh);
 		contentPanel.add(lblEnemieBlock);
 		contentPanel.add(lblExplosion);
+		
+		lblNewHighScoreText = new JLabel("New High Score!!!", SwingConstants.CENTER);
+		lblNewHighScoreText.setForeground(Color.GREEN);
+		lblNewHighScoreText.setFont(new Font("Dialog", Font.PLAIN, 45));
+		lblNewHighScoreText.setBounds(0, 75, 920, 83);
+		contentPanel.add(lblNewHighScoreText);
 		
 		
 		
@@ -171,10 +195,45 @@ public class GameOverPage extends JDialog{
 				}
 			}
 		});
+		initNewHighScoreText(gotNewHighScore);
 	}
 	protected void okButton_mouseClicked(MouseEvent arg0) {
 		this.ok = true;
 		dispose();
+	}
+	private void initNewHighScoreText(boolean gotNewHighScore) {
+		if (gotNewHighScore) {
+			lblNewHighScoreText.setText("New High Score: " + HolidayDashUniverse.getHighScore() + "!!!");
+			lblNewHighScoreText.setVisible(true);
+			lblHighScore.setVisible(false);
+			lblHighScoreValue.setVisible(false);
+			try {
+				File clipFile = new File("res/Sound/newHighScoreOne.wav");
+				AudioInputStream winInputStream =  
+		                AudioSystem.getAudioInputStream(clipFile.getAbsoluteFile()); 
+				Clip winClip = AudioSystem.getClip();
+				winClip.open(winInputStream);
+				winClip.start();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		} else {
+			lblNewHighScoreText.setVisible(false);
+			lblHighScore.setVisible(true);
+			lblHighScoreValue.setVisible(true);
+			try {
+				File clipFile = new File("res/Sound/gameOverOne.wav");
+				AudioInputStream gameOverInputStream =  
+		                AudioSystem.getAudioInputStream(clipFile.getAbsoluteFile()); 
+				Clip gameOverClip = AudioSystem.getClip();
+				gameOverClip.open(gameOverInputStream);
+				FloatControl gainControl = (FloatControl) gameOverClip.getControl(FloatControl.Type.MASTER_GAIN);
+				gainControl.setValue(6f);
+				gameOverClip.start();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 	}
 	private void writeHighScore(int highScore) {
 		try {
