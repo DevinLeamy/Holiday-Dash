@@ -1,2 +1,3 @@
 # Holiday-Dash
-My computer science 20 final project. 
+A fun Christmas-Themed game I made with Java Swing. Clone the repo, open it as an eclipse project and dash away!
+
