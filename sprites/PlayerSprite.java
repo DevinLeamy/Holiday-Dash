@@ -13,7 +13,7 @@ import javax.swing.JLabel;
 public class PlayerSprite extends ActiveSprite{
 	private final double VELOCITY_SHIFT = 75;
 	private final double VELOCITY_UP = 300;
-	public double VELOCITY_FORWARD = 3.5;
+	public double VELOCITY_FORWARD = 4.0;
 	public boolean isGreen = false;
 	private boolean changeColorEventually = false;
 	private ArrayList<int[]> snowCovered = new ArrayList<>();
