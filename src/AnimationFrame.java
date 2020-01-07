@@ -311,7 +311,7 @@ public class AnimationFrame extends JFrame {
 	private void updatePlayerVelocity() {
 		MappedBackground newMappedBackground = new MappedBackground();
 		int totalTrackLength = MappedBackground.TILE_HEIGHT * newMappedBackground.getRowsAndCols()[0];
-		player1.setSpeed(3.5 + ((totalTrackLength - player1.getCenterY()) / 6000)); 
+		player1.setSpeed(4.0 + ((totalTrackLength - player1.getCenterY()) / 3000)); 
 	}
 	private void handleKeyboardInput() {
 		if (keyboard.keyDown(80) && ! universe.isPaused) {
