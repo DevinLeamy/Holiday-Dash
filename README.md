@@ -1,3 +1,3 @@
 # Holiday-Dash
-A fun Christmas-Themed game I made with Java Swing. <\br>
+A fun Christmas-Themed game I made with Java Swing. </br>
 
